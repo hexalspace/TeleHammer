@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-interface HealthComponent
+public interface HealthComponent
 {
 	bool isAlive ();
 }
 
-interface DeathComponent
+public interface DeathComponent
 {
 	void kill ();
 }

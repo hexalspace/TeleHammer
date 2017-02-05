@@ -2,10 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public interface CollisionComponent
+{
+	Collider[] getCollisions();
+}
+
 public class CollisionSystem
 {
-	void OnCollisionEnter ( Collision collision )
+	public void run ( GameObject[] gameObjects )
 	{
-		Debug.Log( "HIT" );
+		foreach (var gameObject in gameObjects )
+		{
+			var collisionComponent = gameObject.GetComponent<CollisionComponent>();
+
+			if (collisionComponent == null)
+			{
+				continue;
+			}
+
+			foreach(var collisionContainer in collisionComponent.getCollisions())
+			{
+				Debug.Log( "COLLISION" );
+			}
+		}
 	}
 }
