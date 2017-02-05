@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class DestroyDeathComponent : MonoBehaviour, DeathComponent
 {
-	public void killMe ()
+	public void kill ()
 	{
 		GameObject.Destroy( this.gameObject );
 	}
