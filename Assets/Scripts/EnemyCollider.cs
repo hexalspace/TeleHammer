@@ -14,6 +14,6 @@ public class EnemyCollider : MonoBehaviour
 
 	void OnTriggerEnter ( Collider collider )
 	{
-		gameObject.sendMessage( new Message.EnemyCollision() );
+		collider.gameObject.sendMessage( new Message.EnemyCollision() );
 	}
 }
