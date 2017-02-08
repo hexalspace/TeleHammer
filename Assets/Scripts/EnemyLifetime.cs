@@ -9,7 +9,7 @@ public class EnemyLifetime : MonoBehaviour, Receiver {
 	{
 		if ( t == typeof( Message.WeaponCollision ) )
 		{
-			Destroy( this.gameObject );
+			Destroy( gameObject );
 		}
 	}
 }

@@ -9,35 +9,51 @@ public interface Receiver
 
 public class Messenger : MonoBehaviour {
 
-	private HashSet<Receiver> subscribers;
+	private HashSet<GameObject> subscribers;
 
 	// Use this for initialization
-	void Start () {
-		subscribers = new HashSet<Receiver>();
+	void Start ()
+	{
+		initialize();
 	}
 
-	public void addReceiver( Receiver subscriber )
+	public void initialize()
 	{
+		if (initialized)
+		{
+			return;
+		}
+
+		subscribers = new HashSet<GameObject>();
+		addSubscriber( gameObject );
+		initialized = true;
+	}
+
+	public void addSubscriber( GameObject subscriber )
+	{
+		if (subscriber == null)
+		{
+			Debug.Log( "addSubscriber passed a null subscriber, this shouldn't happen" );
+			return;
+		}
 		subscribers.Add( subscriber );
 	}
 
-	public void removeReceiver ( Receiver subscriber )
+	public void removeSubscriber ( GameObject subscriber )
 	{
 		subscribers.Remove( subscriber );
 	}
 
 	public void sendMessage<T> ( T message )
 	{
-		foreach ( var receiver in gameObject.GetComponents<Receiver>() )
-		{
-			receiver.receive( typeof( T ), message );
-		}
-		
 		foreach (var subscriber in subscribers)
 		{
-			subscriber.receive( typeof( T ), message );
+			foreach ( var receiver in subscriber.GetComponents<Receiver>() )
+			{
+				receiver.receive( typeof( T ), message );
+			}
 		}
-
-		return;
 	}
+
+	private bool initialized = false;
 }

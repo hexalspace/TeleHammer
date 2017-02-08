@@ -11,4 +11,16 @@ namespace Message
 	public class WeaponCollision
 	{
 	}
+
+	public class GroundCollision
+	{
+	}
+
+	public class ControlActionA
+	{
+	}
+
+	public class ControlActionB
+	{
+	}
 }

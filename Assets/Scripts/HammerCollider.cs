@@ -4,14 +4,6 @@ using UnityEngine;
 
 public class HammerCollider : MonoBehaviour
 {
-
-	// Use this for initialization
-	void Start ()
-	{
-		var r = gameObject.AddComponent<Rigidbody>();
-		r.isKinematic = true;
-	}
-
 	void OnTriggerEnter ( Collider collider )
 	{
 		collider.gameObject.sendMessage( new Message.WeaponCollision() );
