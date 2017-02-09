@@ -4,17 +4,19 @@ using UnityEngine;
 
 public static class GameObjectExtensionMethods
 {
-	private static Messenger getMessenger ( this UnityEngine.GameObject gameObject )
+	private static MessageSystem messageSystem;
+	private static GameObject messageSystemGameObject;
+
+	public static MessageSystem GetMessageSystem ()
 	{
-		var messenger = gameObject.GetComponent<Messenger>();
-
-		if ( messenger == null )
+		if ( messageSystemGameObject == null)
 		{
-			messenger = gameObject.AddComponent<Messenger>();
-			messenger.initialize();
+			messageSystemGameObject = new GameObject();
+			messageSystemGameObject.name = "Global Message System";
+			messageSystem = messageSystemGameObject.AddComponent<MessageSystem>();
+			messageSystem.Init();
 		}
-
-		return messenger;
+		return messageSystem;
 	}
 
 	public static T AddOrGetComponent<T> ( this UnityEngine.GameObject gameObject ) where T : UnityEngine.Component
@@ -29,19 +31,7 @@ public static class GameObjectExtensionMethods
 
 	public static void sendMessage<T> ( this UnityEngine.GameObject gameObject, T message )
 	{
-		gameObject.getMessenger().sendMessage( message );
-		return;
-	}
-
-	public static void addSubscriber ( this UnityEngine.GameObject gameObject, GameObject subscriber )
-	{
-		gameObject.getMessenger().addSubscriber( subscriber );
-		return;
-	}
-
-	public static void removeSubscriber ( this UnityEngine.GameObject gameObject, GameObject subscriber )
-	{
-		gameObject.getMessenger().removeSubscriber( subscriber );
+		GetMessageSystem().sendMessage( message, typeof(T), gameObject );
 		return;
 	}
 }
