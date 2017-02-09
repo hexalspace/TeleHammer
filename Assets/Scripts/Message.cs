@@ -10,6 +10,7 @@ namespace Message
 
 	public class WeaponCollision
 	{
+		public GameObject hitObject;
 	}
 
 	public class GroundCollision
@@ -23,4 +24,21 @@ namespace Message
 	public class ControlActionB
 	{
 	}
+
+	public class ControlForward
+	{
+	}
+
+	public class ControlLeft
+	{
+	}
+
+	public class ControlRight
+	{
+	}
+
+	public class ControlBackward
+	{
+	}
+
 }

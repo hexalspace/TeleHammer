@@ -1,14 +1,19 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Message;
 using UnityEngine;
 
-public class Hammer : MonoBehaviour, Receiver
+public class Hammer : MonoBehaviour,
+	Receiver<Message.ControlActionA>,
+	Receiver<Message.ControlActionB>,
+	Receiver<Message.GroundCollision>
 {
 
 	// Use this for initialization
 	void Start ()
 	{
+		transform.parent = parentObject.transform;
 		rbody = gameObject.AddOrGetComponent<Rigidbody>();
 		rbody.isKinematic = true;
 	}
@@ -27,29 +32,13 @@ public class Hammer : MonoBehaviour, Receiver
 		}
 	}
 
-	public void receive ( object o, Type t, GameObject g )
-	{
-		if ( t == typeof( Message.ControlActionA ) )
-		{
-			HammerCharge();
-		}
-		else if ( t == typeof( Message.ControlActionB ) )
-		{
-			HammerThrow();
-		}
-		else if ( t == typeof( Message.GroundCollision ) )
-		{
-			GroundCollision();
-		}
-	}
-
-	private void HammerCharge()
+	public void receive ( ControlActionA o, GameObject sender )
 	{
 		Debug.Log( "Hammer charging" );
 		charging = true;
 	}
 
-	private void HammerThrow ()
+	public void receive ( ControlActionB o, GameObject sender )
 	{
 		Debug.Log( "Thrown with power " + throwPower );
 
@@ -59,6 +48,20 @@ public class Hammer : MonoBehaviour, Receiver
 
 		throwPower = 0.0f;
 		charging = false;
+		transform.parent = null;
+	}
+
+	public void receive ( GroundCollision o, GameObject sender )
+	{
+		// throw new NotImplementedException();
+	}
+
+	void OnTriggerEnter ( Collider collider )
+	{
+		if ( transform.parent == null)
+		{
+			gameObject.sendMessage( new Message.WeaponCollision() { hitObject = collider.gameObject } );
+		}
 	}
 
 	private void GroundCollision()
@@ -66,10 +69,12 @@ public class Hammer : MonoBehaviour, Receiver
 		charging = false;
 	}
 
+
+
+	public GameObject parentObject;
 	public float chargeRate = 10.0f;
 	public float maxThrow = 100.0f;
 
-	private bool claimed = false;
 	private bool charging = false;
 	private float throwPower = 0.0f;
 	private Rigidbody rbody = null;

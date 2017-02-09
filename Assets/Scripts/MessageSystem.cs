@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface Receiver
+public interface Receiver<T>
 {
-	void receive ( object o, System.Type type, GameObject sender );
+	void receive ( T o, GameObject sender );
 }
 
 public class MessageSystem : MonoBehaviour
@@ -16,9 +16,19 @@ public class MessageSystem : MonoBehaviour
 		public GameObject sender;
 	}
 
-	private Queue<Message> messageQueue;
+	private class ReceiverTypeInfo
+	{
+		public System.Type receiveType;
+		public System.Reflection.MethodInfo receiverTypeReceiveMethod;
+	}
 
-    void Start ()
+	private static readonly string receiverMethodName = "receive";
+
+	private Queue<Message> messageQueue;
+	private Dictionary<System.Type, ReceiverTypeInfo> methodsByType;
+
+
+	void Start ()
 	{
 		Init();
 	}
@@ -29,6 +39,11 @@ public class MessageSystem : MonoBehaviour
 		{
 			messageQueue = new Queue<Message>();
 		}
+
+		if ( methodsByType == null)
+		{
+			methodsByType = new Dictionary<System.Type, ReceiverTypeInfo>();
+		}
 	}
 
 	public void sendMessage(object o, System.Type type, GameObject sender)
@@ -36,23 +51,34 @@ public class MessageSystem : MonoBehaviour
 		messageQueue.Enqueue( new Message { o = o, type = type, sender = sender } );
 	}
 	
+	private ReceiverTypeInfo GetReceiveTypeInfo (System.Type t)
+	{
+		if (!methodsByType.ContainsKey(t))
+		{
+			var receiverTypeInfo = new ReceiverTypeInfo();
+			receiverTypeInfo.receiveType = typeof( Receiver<> ).MakeGenericType( t );
+			receiverTypeInfo.receiverTypeReceiveMethod = receiverTypeInfo.receiveType.GetMethod( receiverMethodName );
+			methodsByType[t] = receiverTypeInfo;
+		}
+
+		return methodsByType[t];
+	}
+	
 	// Update is called once per frame
 	void Update ()
 	{
 		var gameObjects = Resources.FindObjectsOfTypeAll<GameObject>();
-		var receivers = new List<Receiver>();
-
-		foreach (var gameObject in gameObjects)
-		{
-			receivers.AddRange( gameObject.GetComponents<Receiver>() );
-		}
 
 		while (messageQueue.Count > 0)
 		{
 			var message = messageQueue.Dequeue();
-			foreach (var receiver in receivers )
+			var receiverTypeInfo = GetReceiveTypeInfo( message.type );
+			foreach ( var gameObject in gameObjects )
 			{
-				receiver.receive( message.o, message.type, message.sender );
+				foreach (var receiver in gameObject.GetComponents( receiverTypeInfo.receiveType ))
+				{
+					receiverTypeInfo.receiverTypeReceiveMethod.Invoke(receiver, new object[] { message.o, message.sender } );
+				}
 			}
 		}
 	}
