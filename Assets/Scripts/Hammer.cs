@@ -23,7 +23,6 @@ public class Hammer : MonoBehaviour,
 	public float hammerPickupTime = 1.0f;
 	public GameObject hammerOwner;
 
-
 	private float elapsedHammerPickupTime = 0.0f;
 	private Vector3 droppedLocalPosition;
 	private Quaternion droppedLocalRotation;
@@ -36,9 +35,6 @@ public class Hammer : MonoBehaviour,
 	private Quaternion initialLocalRotation;
 	private Transform initialParentTransform;
 
-
-
-	// Use this for initialization
 	void Start ()
 	{
 		initialParentTransform = gameObject.transform.parent;
@@ -49,7 +45,6 @@ public class Hammer : MonoBehaviour,
 		rbody.isKinematic = true;
 	}
 	
-	// Update is called once per frame
 	void Update ()
 	{
 
