@@ -8,7 +8,7 @@ namespace Message
 	{
 	}
 
-	public class WeaponCollision
+	public class HammerCollision
 	{
 		public GameObject hitObject;
 	}
@@ -17,28 +17,11 @@ namespace Message
 	{
 	}
 
-	public class ControlActionA
+	public class ChargeHammer
 	{
 	}
 
-	public class ControlActionB
+	public class ThrowHammer
 	{
 	}
-
-	public class ControlForward
-	{
-	}
-
-	public class ControlLeft
-	{
-	}
-
-	public class ControlRight
-	{
-	}
-
-	public class ControlBackward
-	{
-	}
-
 }

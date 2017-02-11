@@ -5,9 +5,9 @@ using Message;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour, 
-	Receiver<Message.WeaponCollision>
+	Receiver<Message.HammerCollision>
 {
-	public void receive ( WeaponCollision weaponCollision, GameObject sender )
+	public void receive ( HammerCollision weaponCollision, GameObject sender )
 	{
 		if ( weaponCollision.hitObject == gameObject )
 		{
