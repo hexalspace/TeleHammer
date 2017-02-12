@@ -53,4 +53,21 @@ public class Thor : MonoBehaviour,
 		teleportTo = o.enemyKillLocation;
 		elapsedTeleportTime = 0.0f;
 	}
+
+	void OnCollisionEnter ( Collision collision )
+	{
+		if ( thorState == ThorState.TELEPORTING )
+		{
+			gameObject.sendMessage( new Message.PlayerAttack() { hitObject = collision.gameObject } );
+		}
+	}
+
+	void OnTriggerEnter ( Collider collider )
+	{
+		if ( thorState == ThorState.TELEPORTING )
+		{
+			gameObject.sendMessage( new Message.PlayerAttack() { hitObject = collider.gameObject } );
+		}
+	}
+
 }

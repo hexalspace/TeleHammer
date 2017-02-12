@@ -7,7 +7,7 @@ using UnityEngine;
 public class Hammer : MonoBehaviour,
 	Receiver<Message.ChargeHammer>,
 	Receiver<Message.ThrowHammer>,
-	Receiver<Message.HammerCollision>,
+	Receiver<Message.HammerAttack>,
 	Receiver<Message.EnemyKilledByHammer>
 {
 
@@ -113,7 +113,7 @@ public class Hammer : MonoBehaviour,
 		hammerState = HammerState.TRANSITIONING_TO_HELD;
 	}
 
-	public void receive ( HammerCollision o, GameObject sender )
+	public void receive ( HammerAttack o, GameObject sender )
 	{
 		if (sender != gameObject || o.hitObject != hammerOwner || hammerState != HammerState.THROWN)
 		{
@@ -133,13 +133,18 @@ public class Hammer : MonoBehaviour,
 
 	void OnCollisionEnter( Collision collision)
 	{
-		gameObject.sendMessage( new Message.HammerCollision() { hitObject = collision.gameObject } );
+		if ( hammerState == HammerState.THROWN )
+		{
+			gameObject.sendMessage( new Message.HammerAttack() { hitObject = collision.gameObject } );
+		}
 	}
 
 	void OnTriggerEnter ( Collider collider )
 	{
-		gameObject.sendMessage( new Message.HammerCollision() { hitObject = collider.gameObject } );
+		if (hammerState == HammerState.THROWN)
+		{
+			gameObject.sendMessage( new Message.HammerAttack() { hitObject = collider.gameObject } );
+		}
 	}
-
 
 }

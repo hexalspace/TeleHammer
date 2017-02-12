@@ -8,7 +8,12 @@ namespace Message
 	{
 	}
 
-	public class HammerCollision
+	public class HammerAttack
+	{
+		public GameObject hitObject;
+	}
+
+	public class PlayerAttack
 	{
 		public GameObject hitObject;
 	}
