@@ -24,4 +24,9 @@ namespace Message
 	public class ThrowHammer
 	{
 	}
+
+	public class EnemyKilledByHammer
+	{
+		public Vector3 enemyKillLocation;
+	}
 }

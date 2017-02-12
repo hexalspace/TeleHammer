@@ -4,8 +4,22 @@ using System.Collections.Generic;
 using Message;
 using UnityEngine;
 
-public class Thor : MonoBehaviour
+
+public class Thor : MonoBehaviour,
+	Receiver<Message.EnemyKilledByHammer>
 {
+	enum ThorState
+	{
+		DEFAULT,
+		TELEPORTING,
+	}
+
+	public float teleportTime = 1.0f;
+
+	private ThorState thorState;
+	private Vector3 teleportFrom;
+	private Vector3 teleportTo;
+	private float elapsedTeleportTime = 0.0f;
 
 	// Use this for initialization
 	void Start ()
@@ -15,6 +29,28 @@ public class Thor : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-		
+		if ( thorState == ThorState.DEFAULT )
+		{
+		}
+		else if (thorState == ThorState.TELEPORTING)
+		{
+			elapsedTeleportTime += Time.deltaTime;
+			float percentagePickupTime = Mathf.Clamp01( elapsedTeleportTime / teleportTime );
+
+			transform.position = Vector3.Lerp( teleportFrom, teleportTo, percentagePickupTime );
+
+			if ( elapsedTeleportTime >= teleportTime )
+			{
+				thorState = ThorState.DEFAULT;
+			}
+		}
+	}
+
+	public void receive ( EnemyKilledByHammer o, GameObject sender )
+	{
+		thorState = ThorState.TELEPORTING;
+		teleportFrom = gameObject.transform.position;
+		teleportTo = o.enemyKillLocation;
+		elapsedTeleportTime = 0.0f;
 	}
 }

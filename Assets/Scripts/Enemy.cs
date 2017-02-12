@@ -11,6 +11,9 @@ public class Enemy : MonoBehaviour,
 	{
 		if ( weaponCollision.hitObject == gameObject )
 		{
+			Vector3 killedPosition = new Vector3();
+			killedPosition = gameObject.transform.position;
+			gameObject.sendMessage( new EnemyKilledByHammer() { enemyKillLocation = killedPosition } );
 			Destroy( gameObject );
 		}
 	}

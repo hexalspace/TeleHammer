@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class StrafeControl: MonoBehaviour
 {
-
 	private static readonly string AXIS_HORIZONTAL = "Horizontal";
 	private static readonly string AXIS_VERTICAL = "Vertical";
 

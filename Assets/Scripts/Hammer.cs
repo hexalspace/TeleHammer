@@ -7,7 +7,8 @@ using UnityEngine;
 public class Hammer : MonoBehaviour,
 	Receiver<Message.ChargeHammer>,
 	Receiver<Message.ThrowHammer>,
-	Receiver<Message.HammerCollision>
+	Receiver<Message.HammerCollision>,
+	Receiver<Message.EnemyKilledByHammer>
 {
 
 	enum HammerState
@@ -65,17 +66,11 @@ public class Hammer : MonoBehaviour,
 			transform.localPosition = Vector3.Lerp( droppedLocalPosition, initialLocalPosition, percentagePickupTime );
 			transform.localRotation = Quaternion.Lerp( droppedLocalRotation, initialLocalRotation, percentagePickupTime );
 
-			if ( percentagePickupTime == 1.0f)
-			{
-				int x = 0;
-			}
-
 			if ( elapsedHammerPickupTime >= hammerPickupTime )
 			{
-				elapsedHammerPickupTime = 0.0f;
+				rbody.isKinematic = true;
 				hammerState = HammerState.HELD;
 			}
-
 		}
 	}
 
@@ -108,6 +103,16 @@ public class Hammer : MonoBehaviour,
 		transform.parent = null;
 	}
 
+	public void TransitionToHeld()
+	{
+		rbody.isKinematic = true;
+		transform.parent = initialParentTransform;
+		elapsedHammerPickupTime = 0.0f;
+		droppedLocalPosition = transform.localPosition;
+		droppedLocalRotation = transform.localRotation;
+		hammerState = HammerState.TRANSITIONING_TO_HELD;
+	}
+
 	public void receive ( HammerCollision o, GameObject sender )
 	{
 		if (sender != gameObject || o.hitObject != hammerOwner || hammerState != HammerState.THROWN)
@@ -115,12 +120,15 @@ public class Hammer : MonoBehaviour,
 			return;
 		}
 
-		rbody.isKinematic = true;
-		transform.parent = initialParentTransform;
-		hammerState = HammerState.TRANSITIONING_TO_HELD;
+		TransitionToHeld();
+	}
 
-		droppedLocalPosition = transform.localPosition;
-		droppedLocalRotation = transform.localRotation;
+	public void receive ( EnemyKilledByHammer o, GameObject sender )
+	{
+		if (hammerState == HammerState.THROWN)
+		{
+			TransitionToHeld();
+		}
 	}
 
 	void OnCollisionEnter( Collision collision)
@@ -132,4 +140,6 @@ public class Hammer : MonoBehaviour,
 	{
 		gameObject.sendMessage( new Message.HammerCollision() { hitObject = collider.gameObject } );
 	}
+
+
 }
