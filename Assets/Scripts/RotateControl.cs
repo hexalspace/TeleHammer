@@ -26,6 +26,8 @@ public class RotateControl : MonoBehaviour
 		var mouseDelta = new Vector2( Input.GetAxisRaw( AXIS_HORIZONTAL ), Input.GetAxisRaw( AXIS_VERTICAL ) );
 		mouseLook += mouseDelta;
 
+		mouseLook.y = Mathf.Clamp( mouseLook.y, -90.0f, 90.0f );
+
 		transform.localRotation = Quaternion.AngleAxis( -mouseLook.y, Vector3.right );
 		character.transform.localRotation = Quaternion.AngleAxis( mouseLook.x, character.transform.up );
 

@@ -28,7 +28,7 @@ public class Hammer : MonoBehaviour,
 	private Vector3 droppedLocalPosition;
 	private Quaternion droppedLocalRotation;
 
-	private HammerState hammerState;
+	private HammerState hammerState = HammerState.HELD;
 	private float throwPower = 0.0f;
 	private Rigidbody rbody = null;
 
@@ -48,7 +48,6 @@ public class Hammer : MonoBehaviour,
 	
 	void Update ()
 	{
-
 		if ( hammerState == HammerState.CHARGING )
 		{
 			throwPower += chargeRate * Time.deltaTime;

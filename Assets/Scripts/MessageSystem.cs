@@ -67,10 +67,10 @@ public class MessageSystem : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-		var gameObjects = Resources.FindObjectsOfTypeAll<GameObject>();
-
 		while (messageQueue.Count > 0)
 		{
+			// Resource.FindObjectsOfTypeAll<GameObject> was giving me objects in invalid states
+			var gameObjects = FindObjectsOfType<GameObject>();
 			var message = messageQueue.Dequeue();
 			var receiverTypeInfo = GetReceiveTypeInfo( message.type );
 			foreach ( var gameObject in gameObjects )
