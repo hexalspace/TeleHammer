@@ -20,6 +20,7 @@ namespace Message
 
 	public class GroundCollision
 	{
+		public GameObject hitObject;
 	}
 
 	public class ChargeHammer

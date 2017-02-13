@@ -8,7 +8,8 @@ public class Hammer : MonoBehaviour,
 	Receiver<Message.ChargeHammer>,
 	Receiver<Message.ThrowHammer>,
 	Receiver<Message.HammerAttack>,
-	Receiver<Message.EnemyKilledByHammer>
+	Receiver<Message.EnemyKilledByHammer>,
+	Receiver<Message.GroundCollision>
 {
 
 	enum HammerState
@@ -23,6 +24,13 @@ public class Hammer : MonoBehaviour,
 	public float maxThrow = 100.0f;
 	public float hammerPickupTime = 1.0f;
 	public GameObject hammerOwner;
+	public AudioClip throwSound;
+	public AudioClip chargeSound;
+	public AudioClip pickupSound;
+	public AudioClip groundHitSound;
+	public AudioClip enemyHitSound;
+
+
 
 	private float elapsedHammerPickupTime = 0.0f;
 	private Vector3 droppedLocalPosition;
@@ -31,6 +39,8 @@ public class Hammer : MonoBehaviour,
 	private HammerState hammerState = HammerState.HELD;
 	private float throwPower = 0.0f;
 	private Rigidbody rbody = null;
+	private AudioSource regularSource;
+	private AudioSource loopSource;
 
 	private Vector3 initialLocalPosition;
 	private Quaternion initialLocalRotation;
@@ -44,6 +54,11 @@ public class Hammer : MonoBehaviour,
 
 		rbody = gameObject.AddOrGetComponent<Rigidbody>();
 		rbody.isKinematic = true;
+
+		regularSource = gameObject.AddComponent<AudioSource>();
+		loopSource = gameObject.AddComponent<AudioSource>();
+		loopSource.loop = true;
+		loopSource.clip = chargeSound;
 	}
 	
 	void Update ()
@@ -51,14 +66,23 @@ public class Hammer : MonoBehaviour,
 		if ( hammerState == HammerState.CHARGING )
 		{
 			throwPower += chargeRate * Time.deltaTime;
+			Debug.Log( throwPower );
 
 			if ( throwPower > maxThrow )
 			{
 				throwPower = maxThrow;
 			}
+
+			if (!loopSource.isPlaying)
+			{
+				loopSource.Play();
+			}
+
+			loopSource.volume = ( throwPower / maxThrow );
 		}
 		else if (hammerState == HammerState.TRANSITIONING_TO_HELD)
 		{
+			loopSource.Stop();
 			elapsedHammerPickupTime += Time.deltaTime;
 			float percentagePickupTime = Mathf.Clamp01(elapsedHammerPickupTime / hammerPickupTime);
 
@@ -70,6 +94,11 @@ public class Hammer : MonoBehaviour,
 				rbody.isKinematic = true;
 				hammerState = HammerState.HELD;
 			}
+		}
+		else
+		{
+			// State management sucks in Unity!
+			loopSource.Stop();
 		}
 	}
 
@@ -97,13 +126,18 @@ public class Hammer : MonoBehaviour,
 		rbody.AddRelativeForce( 0, 0, throwPower, ForceMode.Impulse );
 		rbody.AddRelativeTorque( throwPower, 0, 0, ForceMode.Impulse );
 
+		regularSource.PlayOneShot( throwSound,  Mathf.Clamp01(throwPower/maxThrow));
+
 		throwPower = 0.0f;
 		hammerState = HammerState.THROWN;
 		transform.parent = null;
+
+
 	}
 
 	public void TransitionToHeld()
 	{
+		regularSource.PlayOneShot( pickupSound );
 		rbody.isKinematic = true;
 		transform.parent = initialParentTransform;
 		elapsedHammerPickupTime = 0.0f;
@@ -124,9 +158,18 @@ public class Hammer : MonoBehaviour,
 
 	public void receive ( EnemyKilledByHammer o, GameObject sender )
 	{
+		regularSource.PlayOneShot( enemyHitSound );
 		if (hammerState == HammerState.THROWN)
 		{
 			TransitionToHeld();
+		}
+	}
+
+	public void receive ( GroundCollision o, GameObject sender )
+	{
+		if ( o.hitObject == gameObject )
+		{
+			regularSource.PlayOneShot( groundHitSound );
 		}
 	}
 
@@ -145,5 +188,6 @@ public class Hammer : MonoBehaviour,
 			gameObject.sendMessage( new Message.HammerAttack() { hitObject = collider.gameObject } );
 		}
 	}
+
 
 }
