@@ -2,12 +2,12 @@
 using System.Collections;
 
 // Applies an explosion force to all nearby rigidbodies
-public class TelepoerKnockback : MonoBehaviour
+public class TeleportKnockback : MonoBehaviour
 {
     public float radius = 5.0F;
     public float power = 10.0F;
 
-    void Start()
+    public void Start()
     {
         Vector3 explosionPos = transform.position;
         Collider[] colliders = Physics.OverlapSphere(explosionPos, radius);

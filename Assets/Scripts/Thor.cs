@@ -8,7 +8,8 @@ using UnityEngine;
 public class Thor : MonoBehaviour,
 	Receiver<Message.EnemyKilledByHammer>
 {
-	enum ThorState
+    TeleportKnockback knockback = new TeleportKnockback();
+    enum ThorState
 	{
 		DEFAULT,
 		TELEPORTING,
@@ -42,6 +43,8 @@ public class Thor : MonoBehaviour,
 			if ( elapsedTeleportTime >= teleportTime )
 			{
 				thorState = ThorState.DEFAULT;
+                //Teleport Knockback goes here
+                knockback.Start();
 			}
 		}
 	}
