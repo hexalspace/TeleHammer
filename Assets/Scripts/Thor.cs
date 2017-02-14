@@ -16,7 +16,11 @@ public class Thor : MonoBehaviour,
 	}
 
 	public float teleportTime = 1.0f;
+	public float explosionRadius = 5.0F;
+	public float explosionPower = 10.0F;
+	public AudioClip explosionSound;
 
+	private AudioSource regularSource;
 	private ThorState thorState;
 	private Vector3 teleportFrom;
 	private Vector3 teleportTo;
@@ -25,6 +29,7 @@ public class Thor : MonoBehaviour,
 	// Use this for initialization
 	void Start ()
 	{
+		regularSource = gameObject.AddComponent<AudioSource>();
 	}
 
 	// Update is called once per frame
@@ -42,9 +47,18 @@ public class Thor : MonoBehaviour,
 
 			if ( elapsedTeleportTime >= teleportTime )
 			{
+				regularSource.PlayOneShot( explosionSound );
+				Vector3 explosionPos = transform.position;
+				Collider[] colliders = Physics.OverlapSphere( explosionPos, explosionRadius );
+				foreach ( Collider hit in colliders )
+				{
+					Rigidbody rb = hit.GetComponent<Rigidbody>();
+
+					if ( rb != null && hit.gameObject != gameObject)
+						rb.AddExplosionForce( explosionPower, explosionPos, explosionRadius, 0.0f, ForceMode.Impulse );
+				}
+
 				thorState = ThorState.DEFAULT;
-                //Teleport Knockback goes here
-                knockback.Start();
 			}
 		}
 	}
