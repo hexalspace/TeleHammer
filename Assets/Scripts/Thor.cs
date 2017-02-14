@@ -6,7 +6,8 @@ using UnityEngine;
 
 
 public class Thor : MonoBehaviour,
-	Receiver<Message.EnemyKilledByHammer>
+	Receiver<Message.EnemyKilledByHammer>,
+	Receiver<Message.EnemyAttack>
 {
     enum ThorState
 	{
@@ -86,4 +87,24 @@ public class Thor : MonoBehaviour,
 		}
 	}
 
+	public void receive ( EnemyAttack o, GameObject sender )
+	{
+		bool childHit = false;
+		foreach ( var childTransform in gameObject.GetComponentsInChildren<Transform>() )
+		{
+			//child is your child transform
+			if ( childTransform.gameObject == o.hitObject)
+			{
+				childHit = true;
+				break;
+			}
+		}
+
+		if (o.hitObject == gameObject || childHit )
+		{
+			UnityEngine.SceneManagement.SceneManager.LoadScene( UnityEngine.SceneManagement.SceneManager.GetActiveScene().name );
+		}
+
+
+	}
 }

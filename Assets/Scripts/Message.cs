@@ -35,4 +35,13 @@ namespace Message
 	{
 		public Vector3 enemyKillLocation;
 	}
+
+	public class EnemyKilled
+	{
+	}
+
+	public class EnemyAttack
+	{
+		public GameObject hitObject;
+	}
 }
