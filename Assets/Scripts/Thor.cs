@@ -8,7 +8,6 @@ using UnityEngine;
 public class Thor : MonoBehaviour,
 	Receiver<Message.EnemyKilledByHammer>
 {
-    TeleportKnockback knockback = new TeleportKnockback();
     enum ThorState
 	{
 		DEFAULT,
