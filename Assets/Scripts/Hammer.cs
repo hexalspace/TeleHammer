@@ -123,7 +123,7 @@ public class Hammer : MonoBehaviour,
 		Debug.Log( "Thrown with power " + throwPower );
 
 		rbody.isKinematic = false;
-		rbody.AddRelativeForce( 0, 0, throwPower, ForceMode.Impulse );
+		rbody.AddRelativeForce( 0, -10, throwPower, ForceMode.Impulse );  //distace of throw  (sideways, backwards, up)
 		rbody.AddRelativeTorque( throwPower, 0, 0, ForceMode.Impulse );
 
 		regularSource.PlayOneShot( throwSound,  Mathf.Clamp01(throwPower/maxThrow));

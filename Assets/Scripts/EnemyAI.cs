@@ -9,7 +9,7 @@ public class EnemyAI : MonoBehaviour {
     //At what distance will the enemy walk towards the player?
 //  public float walkingDistance = 10.0f;
     //In what time will the enemy complete the journey between its position and the players position
-    public float smoothTime = 10.0f;
+    public float smoothTime = 1.0f;
     //Vector3 used to store the velocity of the enemy
     private Vector3 smoothVelocity = Vector3.zero;
     
