@@ -18,14 +18,17 @@ public class EnemyAI : MonoBehaviour {
     {
         //Look at the player
         transform.LookAt(player);
-        //Calculate distance between player
-//      float distance = Vector3.Distance(transform.position, player.position);
-        //If the distance is smaller than the walkingDistance
-//      if (distance < walkingDistance)
-//      {
-            //Move the enemy towards the player with smoothdamp
-            transform.position = Vector3.SmoothDamp(transform.position, player.position, ref smoothVelocity, smoothTime);
-//      }
+		//Calculate distance between player
+		//      float distance = Vector3.Distance(transform.position, player.position);
+		//If the distance is smaller than the walkingDistance
+		//      if (distance < walkingDistance)
+		//      {
+		//Move the enemy towards the player with smoothdamp
+
+		// take players current position plus a little bit in the direction from bad guy to player to get a point slighlty behind the player to go for
+		Vector3 slightlyBehindPlayerPos = player.position + 2 * Vector3.Normalize( player.position - transform.position );
+
+		transform.position = Vector3.SmoothDamp( transform.position, slightlyBehindPlayerPos, ref smoothVelocity, smoothTime );
     }
 
 }

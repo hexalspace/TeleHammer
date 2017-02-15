@@ -11,6 +11,15 @@ public class Spawner : MonoBehaviour,
 	private int enemiesSpawned = 1;
 	private int enemiesKilled = 0;
 
+	public float minDistanceFromPlayer;
+	public float minXpos;
+	public float maxXpos;
+	public float minYpos;
+	public float maxYpos;
+	public float minZpos;
+	public float maxZpos;
+	public Transform LowerLeftBounds;
+
 	public GameObject[] enemyPrefabs;
 
 	public GameObject thor;
@@ -21,7 +30,7 @@ public class Spawner : MonoBehaviour,
 		if (enemiesKilled == enemiesSpawned)
 		{
 			enemiesKilled = 0;
-			enemiesSpawned *= 2;
+			enemiesSpawned += 1;
 
 			foreach (var i in System.Linq.Enumerable.Range( 0, enemiesSpawned ))
 			{
@@ -32,8 +41,22 @@ public class Spawner : MonoBehaviour,
 
 	public void spawnOne()
 	{
+		bool foundSpawnLocation = false;
+		var whereToSpawn = new Vector3();
+		while (!foundSpawnLocation )
+		{
+			var xSpawnPos = UnityEngine.Random.Range( minXpos, maxXpos );
+			var ySpawnPos = UnityEngine.Random.Range( minYpos, maxYpos );
+			var zSpawnPos = UnityEngine.Random.Range( minZpos, maxZpos );
+			whereToSpawn = new Vector3( xSpawnPos, ySpawnPos, zSpawnPos );
+
+			// Must be certain distance from player to spawn
+			foundSpawnLocation = Vector3.Distance( whereToSpawn, thor.transform.position ) > minDistanceFromPlayer;
+		}
+
+
 		var toSpawn = enemyPrefabs[UnityEngine.Random.Range( 0, enemyPrefabs.Length )];
-		var enemy = Instantiate( toSpawn, Vector3.zero, Quaternion.identity );
+		var enemy = Instantiate( toSpawn, whereToSpawn, Quaternion.identity );
 		var enemyAI = enemy.GetComponent<EnemyAI>();
 		enemyAI.player = thor.transform;
 	}

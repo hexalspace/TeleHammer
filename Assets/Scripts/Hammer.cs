@@ -20,6 +20,8 @@ public class Hammer : MonoBehaviour,
 		THROWN
 	}
 
+	public float hammerShake = 0.5f;
+	public float initialThrowPower = 20.0f;
 	public float chargeRate = 10.0f;
 	public float maxThrow = 100.0f;
 	public float hammerPickupTime = 1.0f;
@@ -59,6 +61,8 @@ public class Hammer : MonoBehaviour,
 		loopSource = gameObject.AddComponent<AudioSource>();
 		loopSource.loop = true;
 		loopSource.clip = chargeSound;
+
+		throwPower = initialThrowPower;
 	}
 	
 	void Update ()
@@ -78,7 +82,15 @@ public class Hammer : MonoBehaviour,
 				loopSource.Play();
 			}
 
-			loopSource.volume = ( throwPower / maxThrow );
+			float percentage = throwPower / maxThrow;
+
+			transform.localPosition = initialLocalPosition;
+			float newXTransform = transform.localPosition.x + UnityEngine.Random.Range( 0, percentage * hammerShake );
+			Vector3 shakenTransform = transform.localPosition;
+			shakenTransform.x = newXTransform;
+			transform.localPosition = shakenTransform;
+
+			loopSource.volume = ( percentage );
 		}
 		else if (hammerState == HammerState.TRANSITIONING_TO_HELD)
 		{
@@ -128,7 +140,7 @@ public class Hammer : MonoBehaviour,
 
 		regularSource.PlayOneShot( throwSound,  Mathf.Clamp01(throwPower/maxThrow));
 
-		throwPower = 0.0f;
+		throwPower = initialThrowPower;
 		hammerState = HammerState.THROWN;
 		transform.parent = null;
 

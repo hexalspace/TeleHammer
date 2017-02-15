@@ -8,6 +8,11 @@ public class ActionControl : MonoBehaviour
 
 	void Update ()
 	{
+		if ( Input.GetKeyDown( KeyCode.Escape ) )
+		{
+			Application.Quit();
+		}
+
 		if ( Input.GetButtonDown( BUTTON_ACTION_A ) )
 		{
 			gameObject.sendMessage( new Message.ChargeHammer() );

@@ -13,8 +13,12 @@ public class Thor : MonoBehaviour,
 	{
 		DEFAULT,
 		TELEPORTING,
+		INVINCIBLE,
 	}
 
+	public string sceneToLoadOnDeath;
+
+	public float invincibleTime = 1.0f;
 	public float teleportTime = 1.0f;
 	public float explosionRadius = 5.0F;
 	public float explosionPower = 10.0F;
@@ -58,8 +62,18 @@ public class Thor : MonoBehaviour,
 						rb.AddExplosionForce( explosionPower, explosionPos, explosionRadius, 0.0f, ForceMode.Impulse );
 				}
 
+				elapsedTeleportTime = 0.0f;
+				thorState = ThorState.INVINCIBLE;
+			}
+		}
+		else if (thorState == ThorState.INVINCIBLE )
+		{
+			elapsedTeleportTime += Time.deltaTime;
+			if (elapsedTeleportTime >= invincibleTime )
+			{
 				thorState = ThorState.DEFAULT;
 			}
+
 		}
 	}
 
@@ -89,6 +103,11 @@ public class Thor : MonoBehaviour,
 
 	public void receive ( EnemyAttack o, GameObject sender )
 	{
+		if (thorState != ThorState.DEFAULT )
+		{
+			return;
+		}
+
 		bool childHit = false;
 		foreach ( var childTransform in gameObject.GetComponentsInChildren<Transform>() )
 		{
@@ -100,9 +119,9 @@ public class Thor : MonoBehaviour,
 			}
 		}
 
-		if (o.hitObject == gameObject || childHit )
+		if ( o.hitObject == gameObject || childHit )
 		{
-			UnityEngine.SceneManagement.SceneManager.LoadScene( UnityEngine.SceneManagement.SceneManager.GetActiveScene().name );
+			UnityEngine.SceneManagement.SceneManager.LoadScene( sceneToLoadOnDeath );
 		}
 
 
