@@ -1,6 +1,8 @@
 ## TeleHammer
 
-Game jam game repository
+Programming and Sound: Jacob Jarecki
+Design and Programming: Kevin Langendoen
+Misti Lommen: Art and Textures
 
 ## License
 
