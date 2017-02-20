@@ -13,7 +13,7 @@ public class ActionControl : MonoBehaviour
 			Application.Quit();
 		}
 
-		if ( Input.GetButtonDown( BUTTON_ACTION_A ) )
+		if ( Input.GetButtonDown( BUTTON_ACTION_A ) || Input.GetButton( BUTTON_ACTION_A) )
 		{
 			gameObject.sendMessage( new Message.ChargeHammer() );
 		}

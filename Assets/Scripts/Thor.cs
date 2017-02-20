@@ -18,6 +18,7 @@ public class Thor : MonoBehaviour,
 
 	public string sceneToLoadOnDeath;
 
+	public float gravityAmount = 1.0f;
 	public float invincibleTime = 1.0f;
 	public float teleportTime = 1.0f;
 	public float explosionRadius = 5.0F;
@@ -33,6 +34,7 @@ public class Thor : MonoBehaviour,
 	// Use this for initialization
 	void Start ()
 	{
+		Physics.gravity = new Vector3( 0, -gravityAmount, 0 );
 		regularSource = gameObject.AddComponent<AudioSource>();
 	}
 
