@@ -23,10 +23,6 @@ namespace Message
 		public GameObject hitObject;
 	}
 
-	public class ChargeHammer
-	{
-	}
-
 	public class ThrowHammer
 	{
 	}

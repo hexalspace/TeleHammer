@@ -2,6 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+namespace Message
+{
+	public class ChargeHammer
+	{
+	}
+}
 public class ActionControl : MonoBehaviour
 {
 	private static readonly string BUTTON_ACTION_A = "ActionA";

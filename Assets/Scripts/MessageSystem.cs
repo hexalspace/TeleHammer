@@ -1,10 +1,25 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using UnityEngine;
 
-public interface Receiver<T>
+
+public abstract class MonoReceiver<T> : MonoBehaviour
 {
-	void receive ( T o, GameObject sender );
+    private void Awake()
+    {
+		// Register for receiving messages here
+		GameObjectExtensionMethods.GetMessageSystem().RegisterReceiver<T>(this);
+	}
+
+	private void OnDestroy()
+    {
+		// Deregister for receiving messages here
+	}
+
+	public abstract void receive(T o, GameObject sender);
 }
 
 public class MessageSystem : MonoBehaviour
@@ -26,15 +41,79 @@ public class MessageSystem : MonoBehaviour
 
 	private Queue<Message> messageQueue;
 	private Dictionary<System.Type, ReceiverTypeInfo> methodsByType;
-
+	private Dictionary<System.Type, HashSet<System.Type>> typeToReciever = new Dictionary<System.Type, HashSet<System.Type>>();
+	private Dictionary<System.Type, GameObject> messageToReceivers = new Dictionary<System.Type, GameObject>();
 
 	void Start ()
 	{
 		Init();
 	}
 
+	public void RegisterReceiver<T>(MonoReceiver<T> receiver)
+    {
+		Action<string> greet = name =>
+		{
+			string greeting = $"Hello {name}!";
+			Console.WriteLine(greeting);
+		};
+
+		Action<GameObject, T> sendAction = (go, message)  =>
+		{
+			receiver.receive(message, go);
+		};
+    }
+
+	public GameObject CreateObject(GameObject original, Vector3 position, Quaternion rotation = new Quaternion(), Transform parent = null)
+	{
+		var gameObj = Instantiate(original, position, rotation, parent);
+		var comps = gameObj.GetComponents(typeof(Component));
+
+		foreach(var c in comps)
+        {
+			HashSet<System.Type> x;
+			if (typeToReciever.TryGetValue(c.GetType(), out x))
+            {
+				foreach (var reciever in x)
+                {
+
+                }
+            }
+        }
+
+
+		return gameObj;
+	}
+
 	public void Init ()
 	{
+		// Get all Message types
+		var recieverTypes = new List<ReceiverTypeInfo>();
+		var messageTypes = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.Namespace == "Message");
+		foreach(var m in messageTypes)
+        {
+			// Construct all possible Reciever interfaces
+			var receiverTypeInfo = new ReceiverTypeInfo();
+			receiverTypeInfo.receiveType = typeof(Receiver<>).MakeGenericType(m);
+			receiverTypeInfo.receiverTypeReceiveMethod = receiverTypeInfo.receiveType.GetMethod(receiverMethodName);
+			recieverTypes.Add(receiverTypeInfo);
+		}
+
+		foreach (var t in Assembly.GetExecutingAssembly().GetTypes())
+        {
+			typeToReciever[t] = new HashSet<System.Type>();
+			foreach (var recieverType in recieverTypes)
+            {
+				if (t.GetInterfaces().Contains(recieverType.receiveType))
+				{
+					typeToReciever[t].Add(recieverType.receiveType);
+				}
+			}
+
+        }
+
+		// Create easy insert/remove gameObject collections for each reciever type
+
+
 		if (messageQueue == null)
 		{
 			messageQueue = new Queue<Message>();

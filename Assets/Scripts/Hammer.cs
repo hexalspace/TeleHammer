@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Message;
 using UnityEngine;
 
+
 public class Hammer : MonoBehaviour,
 	Receiver<Message.ChargeHammer>,
 	Receiver<Message.ThrowHammer>,

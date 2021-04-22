@@ -19,6 +19,11 @@ public static class GameObjectExtensionMethods
 		return messageSystem;
 	}
 
+	public static GameObject CreateObject(GameObject original, Vector3 position, Quaternion rotation = new Quaternion(), Transform parent = null)
+    {
+		return GetMessageSystem().CreateObject(original, position, rotation, parent);
+	}
+
 	public static T AddOrGetComponent<T> ( this UnityEngine.GameObject gameObject ) where T : UnityEngine.Component
 	{
 		var component = gameObject.GetComponent<T>();
